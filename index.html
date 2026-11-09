@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AKarcade</title>
+  <meta name="description" content="AKarcade: step up to the cabinet and play real retro games right in your browser.">
+  <link rel="icon" href="assets/akarcade-logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=3">
+</head>
+<body>
+  <div class="floor" aria-hidden="true"></div>
+  <div class="sky-glow" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <a class="logo" href="#play" aria-label="AKarcade home">
+      <img src="assets/akarcade-logo.png" alt="AKarcade" width="62" height="50">
+    </a>
+    <nav>
+      <a href="#play">Play</a>
+      <a href="#games">Games</a>
+      <a href="#machine">The machine</a>
+    </nav>
+    <button class="sound-btn" id="soundBtn" type="button">♪ SOUND ON</button>
+  </header>
+
+  <main>
+    <section class="hero" id="play">
+      <div class="hero-copy">
+        <img class="hero-logo" src="assets/akarcade-logo.png" alt="AKarcade" width="231" height="188">
+        <p class="eyebrow"><span class="dot"></span> NOW PLAYING · <span id="nowPlaying">GAME SELECT</span></p>
+        <h1>One more<br><em>credit.</em></h1>
+        <p class="lede">
+          Step up to the AKarcade cabinet. Real 8-bit games, a clacky joystick
+          and a glowing CRT, all running right here in your browser.
+        </p>
+        <div class="cta">
+          <button class="btn-primary" id="heroStart" type="button">▶ INSERT COIN</button>
+          <a class="btn-ghost" href="#games">Browse games</a>
+        </div>
+        <dl class="stats">
+          <div><dt>GAMES</dt><dd>3</dd></div>
+          <div><dt>CREDITS</dt><dd>FREE PLAY</dd></div>
+          <div><dt>STAR HOPPER HI</dt><dd data-hiscore>000000</dd></div>
+        </dl>
+      </div>
+
+      <div class="stage" id="stage">
+        <div class="scaler" id="scaler">
+          <div class="cabinet" id="cabinet">
+            <!-- 3D shell: every face is positioned in real 3D space -->
+            <div class="face side side-left" aria-hidden="true"><div class="side-art"></div></div>
+            <div class="face side side-right" aria-hidden="true"><div class="side-art"></div></div>
+            <div class="face top" aria-hidden="true"></div>
+
+            <div class="face marquee-face">
+              <div class="marquee-glass">
+                <div class="marquee-glow"></div>
+                <img src="assets/akarcade-logo.png" alt="AKarcade" width="231" height="188">
+              </div>
+            </div>
+            <div class="face soffit" aria-hidden="true"></div>
+
+            <div class="face bezel-face">
+              <div class="speaker-bar" aria-hidden="true"><span class="grill"></span><span class="grill"></span></div>
+              <svg class="bezel-art" viewBox="0 0 460 400" aria-hidden="true">
+                <polygon points="18,30 442,30 230,392" fill="none" stroke="#2de2e6" stroke-width="3" opacity=".55"/>
+                <polygon points="30,38 430,38 230,378" fill="none" stroke="#ff3ea5" stroke-width="1" opacity=".35"/>
+                <line x1="40" y1="388" x2="420" y2="388" stroke="#ff3ea5" stroke-width="2" opacity=".6"/>
+              </svg>
+              <div class="screen-frame">
+                <div class="screen">
+                  <canvas id="menu" class="layer active" width="256" height="224" aria-label="Game select screen"></canvas>
+                  <canvas id="game" class="layer" width="256" height="224" aria-label="Star Hopper game screen"></canvas>
+                  <canvas id="nes" class="layer" width="256" height="224" aria-label="NES game screen"></canvas>
+                  <div class="scanlines"></div>
+                  <div class="glare"></div>
+                </div>
+              </div>
+              <div class="bezel-label"><span>INSERT COIN</span><span>AKARCADE · CABINET 01</span><span>1 PLAYER</span></div>
+            </div>
+
+            <div class="face panel-top">
+              <div class="panel-art" aria-hidden="true"></div>
+              <div class="joystick" id="joystick" title="Drag to move">
+                <div class="joy-plate"></div>
+                <div class="joy-upright">
+                  <div class="joy-stick"><div class="joy-ball"></div></div>
+                </div>
+              </div>
+              <div class="start-wrap">
+                <div class="small-btns">
+                  <button class="pill-btn" id="selectBtn" type="button">SELECT</button>
+                  <button class="pill-btn start" id="startBtn" type="button">START</button>
+                </div>
+                <button class="menu-btn" id="menuBtn" type="button">◀ MENU</button>
+              </div>
+              <div class="action-btns">
+                <div class="btn-ring"><button class="arcade-btn blue" id="btnB" type="button" aria-label="B button">B</button></div>
+                <div class="btn-ring"><button class="arcade-btn red" id="btnA" type="button" aria-label="A button">A</button></div>
+              </div>
+            </div>
+            <div class="face panel-front" aria-hidden="true"><span class="led"></span></div>
+            <div class="face panel-under" aria-hidden="true"></div>
+
+            <div class="face body-face">
+              <div class="body-art" aria-hidden="true"></div>
+              <div class="coin-door">
+                <span class="rivet r1"></span><span class="rivet r2"></span><span class="rivet r3"></span><span class="rivet r4"></span>
+                <button class="coin-slot" id="coinSlot" type="button" aria-label="Insert coin">
+                  <span class="slot"></span><span class="price">25¢</span>
+                </button>
+                <button class="coin-slot" id="coinSlot2" type="button" aria-label="Insert coin">
+                  <span class="slot"></span><span class="price">25¢</span>
+                </button>
+                <p class="coin-label">INSERT COIN</p>
+                <div class="door-lock"></div>
+              </div>
+            </div>
+            <div class="face kick" aria-hidden="true"></div>
+          </div>
+        </div>
+        <div class="stage-shadow" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <section class="controls">
+      <h2><span>01</span> Controls</h2>
+      <div class="keys-row">
+        <div class="keybox"><div class="keys"><kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd></div><p>Joystick <i>(or WASD)</i></p></div>
+        <div class="keybox"><div class="keys"><kbd>Z</kbd><kbd class="wide">SPACE</kbd></div><p>A button</p></div>
+        <div class="keybox"><div class="keys"><kbd>X</kbd><kbd class="wide">SHIFT</kbd></div><p>B button</p></div>
+        <div class="keybox"><div class="keys"><kbd class="wide">ENTER</kbd></div><p>Start</p></div>
+        <div class="keybox"><div class="keys"><kbd>C</kbd></div><p>Select</p></div>
+        <div class="keybox"><div class="keys"><kbd class="wide">ESC</kbd></div><p>Back to menu</p></div>
+        <div class="keybox"><div class="keys"><kbd>M</kbd></div><p>Sound on/off</p></div>
+      </div>
+      <p class="hint">No keyboard? Drag the joystick and tap the buttons right on the cabinet.</p>
+    </section>
+
+    <section class="games" id="games">
+      <h2><span>02</span> The games</h2>
+      <div class="game-grid">
+        <article class="game-card">
+          <p class="genre">NES · ARCADE SHOOTER</p>
+          <h3>Thwaite</h3>
+          <p>Missiles are raining down on a sleepy town. Steer the crosshair and fire fireworks from two silos
+            to blow them out of the sky. Survive seven nights to win.</p>
+          <ul class="how">
+            <li><b>Joystick</b> aim</li>
+            <li><b>B</b> fire left silo</li>
+            <li><b>A</b> fire right silo</li>
+            <li><b>Start</b> begin / pause</li>
+          </ul>
+          <p class="warn">Flashing effects: explosions flicker.</p>
+          <button class="btn-play" type="button" data-play="thwaite">▶ PLAY</button>
+          <p class="credit">© 2011–2018 Damian Yerrick · Free software, licensed under the
+            <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL v3</a> ·
+            <a href="https://github.com/pinobatch/thwaite-nes" target="_blank" rel="noopener">Source code</a></p>
+        </article>
+
+        <article class="game-card">
+          <p class="genre">NES · PUZZLE</p>
+          <h3>Concentration Room</h3>
+          <p>A classic memory game: flip two cards, find the matching emblems and clear the table.
+            Play Story mode, Solitaire, or take on the CPU.</p>
+          <ul class="how">
+            <li><b>Joystick</b> move</li>
+            <li><b>A</b> flip a card</li>
+            <li><b>Start</b> confirm</li>
+          </ul>
+          <button class="btn-play" type="button" data-play="croom">▶ PLAY</button>
+          <p class="credit">© Damian Yerrick · Free software, licensed under the
+            <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL v3</a> ·
+            <a href="https://github.com/pinobatch/croom-nes" target="_blank" rel="noopener">Source code</a></p>
+        </article>
+
+        <article class="game-card">
+          <p class="genre">AKARCADE ORIGINAL · PLATFORMER</p>
+          <h3>Star Hopper</h3>
+          <p>Guide Pip across a twilight world: stomp the gloops, bust blocks, grab coins and reach the
+            rocket before the clock runs out.</p>
+          <ul class="how">
+            <li><b>Joystick</b> move</li>
+            <li><b>A</b> / <b>Up</b> jump</li>
+            <li><b>B</b> run</li>
+            <li><b>Start</b> begin / pause</li>
+          </ul>
+          <button class="btn-play" type="button" data-play="starhopper">▶ PLAY</button>
+          <p class="credit">Made for AKarcade.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="machine" id="machine">
+      <h2><span>03</span> The machine</h2>
+      <div class="machine-grid">
+        <p class="machine-copy">
+          Cabinet 01 is a tribute to the upright machines that lined arcades in the '80s:
+          a backlit marquee, a curved CRT behind a black bezel, a ball-top joystick and
+          a coin door that ate your pocket money. Inside, a real NES emulator runs genuine
+          8-bit game cartridges, the same code that runs on the original console.
+        </p>
+        <dl class="spec">
+          <div><dt>Display</dt><dd>256 × 224 px · 60 fps</dd></div>
+          <div><dt>System</dt><dd>NES (via JSNES emulator)</dd></div>
+          <div><dt>Controls</dt><dd>8-way stick · A · B · Start · Select</dd></div>
+          <div><dt>Credits</dt><dd>Free play</dd></div>
+        </dl>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <img src="assets/akarcade-logo.png" alt="AKarcade" width="92" height="75">
+    <p>© 2026 AKarcade · Game over is just a suggestion.</p>
+    <p class="fine">Thwaite and Concentration Room © Damian Yerrick, distributed unmodified under the GNU GPL v3.
+      NES emulation by <a href="https://github.com/bfirsh/jsnes" target="_blank" rel="noopener">JSNES</a> (Apache 2.0).</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/jsnes@2.1.0/dist/jsnes.min.js"></script>
+  <script src="game.js?v=3"></script>
+  <script src="arcade.js?v=3"></script>
+  <script src="site.js?v=3"></script>
+</body>
+</html>
